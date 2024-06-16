@@ -1,16 +1,29 @@
 {
   "name": "wsp",
-  "type":"module",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "vitest"
+    "solve": "ts-node index.ts",
+    "tsc": "tsc",
+    "test": "vitest",
+    "check": "npx @biomejs/biome check --write src",
+    "lint": "npx @biomejs/biome lint --write src",
+    "fmt": "npx @biomejs/biome format --write src"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@biomejs/biome": "1.8.1",
     "vite": "^5.3.1",
-    "vitest": "^1.6.0"
+    "vitest": "^1.6.0",
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   }
 }
