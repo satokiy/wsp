@@ -1,11 +1,10 @@
 {
   "name": "wsp",
-  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "solve": "ts-node index.ts",
+    "solve": "ts-node src/index.ts",
     "tsc": "tsc",
     "test": "vitest",
     "check": "npx @biomejs/biome check --write src",
@@ -16,12 +15,9 @@
   "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "1.8.1",
+    "ts-node": "^10.9.2",
     "vite": "^5.3.1",
-    "vitest": "^1.6.0",
-    "@types/bun": "latest"
-  },
-  "dependencies": {
-    "ts-node": "^10.9.2"
+    "vitest": "^1.6.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

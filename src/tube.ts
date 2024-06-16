@@ -29,6 +29,11 @@ export class Tube {
 		this.maxSize = maxSize; // このTubeの最大長
 	}
 
+	copy() {
+		const newTube = new Tube([...this.colors], this.maxSize);
+		return newTube;
+	}
+
 	get nowSize() {
 		return this.colors.length;
 	}
@@ -38,10 +43,6 @@ export class Tube {
 		return this.colors[this.colors.length - 1];
 	}
 
-  // Problemのsnapshotに必要
-	snapshot(): string {
-		return JSON.stringify(this.colors)
-	}
 
 	insertLastBlock(block: Color[]): void {
 		if (this.isFull()) throw new Error("Oops! This tube is full.");
