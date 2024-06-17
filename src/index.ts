@@ -1,8 +1,8 @@
 import { problems } from "./problems";
 
 function main() {
-	const id = 105;
-	const problem = problems.find((p) => p.id === id)?.problem;
+	const id = process.argv[2];
+	const problem = problems.find((p) => p.id === Number(id))?.problem;
 
 	if (problem === undefined) {
 		throw Error("No problem found.");
