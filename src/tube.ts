@@ -1,7 +1,5 @@
 import type { Color } from "./color";
 
-const tubes: Tube[] = [];
-
 // いったん現実的な値で。
 type TubeSize = 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
