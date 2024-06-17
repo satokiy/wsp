@@ -11,4 +11,16 @@ export const problems: { id: number; problem: Problem }[] = [
 			new Tube([], 4),
 		]),
 	},
+	{
+		id: 2,
+		problem: new Problem([
+			new Tube([Color.Grn, Color.Blu, Color.Blu, Color.Ylw], 4),
+			new Tube([Color.Org, Color.Ppl, Color.Org, Color.Ylw], 4),
+			new Tube([Color.Grn, Color.Grn, Color.Ylw, Color.Blu], 4),
+			new Tube([Color.Org, Color.Ppl, Color.Grn, Color.Blu], 4),
+			new Tube([Color.Ppl, Color.Ppl, Color.Org, Color.Ylw], 4),
+			new Tube([], 4),
+			new Tube([], 4),
+		]),
+	},
 ];

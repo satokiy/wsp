@@ -1,11 +1,14 @@
 import { problems } from "./problems";
 
 function main() {
-	const id = 1;
+	const id = 2;
 	const problem = problems.find((p) => p.id === id)?.problem;
-	if (problem !== undefined) {
-		problem.play();
+
+	if (problem === undefined) {
+		throw Error("No problem found.");
 	}
+
+	problem.play();
 }
 
 main();

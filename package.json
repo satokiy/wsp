@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "solve": "ts-node src/index.ts",
+    "dev": "ts-node src/index.ts",
     "tsc": "tsc",
     "test": "vitest",
     "check": "npx @biomejs/biome check --write src",

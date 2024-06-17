@@ -1,14 +1,16 @@
-import { Tube } from "./tube";
+import { Color, Tube } from "./tube";
 
 export class Problem {
 	tubes: Tube[];
 	visits: Map<string, string | null>; // 探索済みリスト
 	queue: string[]; // queue
+	answerPath: string[]; // 答えの探索パス
 
 	constructor(tubes: Tube[]) {
 		this.tubes = tubes;
 		this.visits = new Map();
 		this.queue = [];
+		this.answerPath = [];
 	}
 
 	copy() {
@@ -38,31 +40,54 @@ export class Problem {
 		return this.tubes.filter((t) => t !== tube);
 	}
 
-	// 一手進める
-	playTurn() {}
+	visited(snapshot: string): boolean {
+		return this.visits.has(snapshot);
+	}
+
+	setAnswer(goalNode: string) {
+		let node = goalNode;
+		while (node !== null) {
+			this.answerPath.push(node);
+			node = this.visits.get(node)!;
+		}
+	}
+
+	// 探索終了定義
+	// 空でないすべてのTubeにおいて、Fullかつ、そのTubeの色がすべて同じである
+	isDone(): boolean {
+		const filledTubes = this.tubes.filter((tube) => tube.notEmpty());
+		return filledTubes.every((tube) => tube.isCompleted());
+	}
+
+	// queueごとの簡易チェック処理
+	easyCheck(tubes: Tube[]) {
+		let flat: Color[] = [];
+		for (const tube of tubes) {
+			tube.colors.map((color) => flat.push(color));
+		}
+		console.log(flat);
+		const colors: { [key: string]: number } = flat.reduce((acc: any, color) => {
+			acc[color] = (acc[color] || 0) + 1;
+			return acc;
+		}, {});
+		if (Object.values(colors).some((count) => count > 4)) {
+			throw Error("something went wrong");
+		}
+	}
+
 	// ゲームをプレイ
 	play() {
+		// 初期化
 		const init = this.snapshot();
 		this.queue.push(init);
 		this.visits.set(init, null);
-		let result: string[] | undefined;
+
 		while (this.queue.length > 0) {
 			// queueから1つ取得する
 			let node = this.queue.shift()!;
 			// queueから盤面Problemを復元する
 			const table = Problem.restore(node);
-
-			// 完了
-			if (table.isDone()) {
-				// Goalから逆順にたどる
-				node = table.snapshot();
-				const path: Array<string> = [];
-				while (node !== null) {
-					path.push(node);
-					node = this.visits.get(node)!;
-				}
-				result = path;
-			}
+			this.easyCheck(table.tubes);
 
 			// 盤面のコピーを生成
 			let copy = table.copy();
@@ -86,8 +111,6 @@ export class Problem {
 					(tube) => tube.notCompleted() && tube.notFull(),
 				);
 
-				// console.log(availableTubes)
-
 				// すべての移動可能なTube
 				for (const toTube of availableTubes) {
 					// 移動元がすべて同色,かつ移動先が空の場合、動かす意味がない
@@ -101,7 +124,6 @@ export class Problem {
 					}
 
 					// 移動処理
-					// console.log(fromTube)
 					const color = fromTube.lastOne;
 					while (fromTube.lastOne === color && toTube.notFull()) {
 						const pop = fromTube.popLast();
@@ -123,40 +145,26 @@ export class Problem {
 					this.queue.push(snapshot);
 
 					if (copy.isDone()) {
-						node = table.snapshot();
-						const path: Array<string> = [];
-						while (node !== null) {
-							path.push(node);
-							node = this.visits.get(node)!;
-						}
-						result = path;
-						break;
+						this.setAnswer(snapshot);
 					}
 
-					// copyの状態を移動前に戻す
+					// 重要: copyの状態を移動前に戻す
 					copy = table.copy();
 				}
 			}
 		}
-		if (result === undefined) {
+		if (this.answerPath.length === 0) {
 			console.log("I can't solve...");
 		} else {
 			console.log("Congratulation!!!");
-			for (const r of result) {
+			for (const [index, r] of Object.entries(this.answerPath)) {
+				console.log("------------------------");
+				console.log(index);
 				const obj = JSON.parse(r);
-				console.log(obj);
+				for (const tube of obj) {
+					console.log(tube.colors);
+				}
 			}
 		}
-	}
-
-	visited(snapshot: string): boolean {
-		return this.visits.has(snapshot);
-	}
-
-	// 探索終了定義
-	// 空でないすべてのTubeにおいて、Fullかつ、そのTubeの色がすべて同じである
-	isDone(): boolean {
-		const filledTubes = this.tubes.filter((tube) => tube.notEmpty());
-		return filledTubes.every((tube) => tube.isCompleted());
 	}
 }

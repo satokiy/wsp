@@ -34,39 +34,38 @@ export class Tube {
 		return newTube;
 	}
 
-	get nowSize() {
-		return this.colors.length;
-	}
+	// get nowSize() {
+	// 	return this.colors.length;
+	// }
 
 	// 一番上の色
 	get lastOne(): Color {
 		return this.colors[this.colors.length - 1];
 	}
 
+	// insertLastBlock(block: Color[]): void {
+	// 	if (this.isFull()) throw new Error("Oops! This tube is full.");
+	// 	if (this.nowSize + block.length > this.maxSize)
+	// 		throw new Error("Oops! The number of colors cannot exceed the max size.");
 
-	insertLastBlock(block: Color[]): void {
-		if (this.isFull()) throw new Error("Oops! This tube is full.");
-		if (this.nowSize + block.length > this.maxSize)
-			throw new Error("Oops! The number of colors cannot exceed the max size.");
+	// 	for (const color of block) this.colors.push(color);
+	// }
 
-		for (const color of block) this.colors.push(color);
-	}
+	// popLastBlock(): Color[] {
+	// 	if (this.isEmpty()) throw new Error("Oops! This is Empty tube.");
 
-	popLastBlock(): Color[] {
-		if (this.isEmpty()) throw new Error("Oops! This is Empty tube.");
-
-		const res: Color[] = [];
-		const last = this.colors.pop() as Color; // undefinedでないことは保証されてる
-		res.push(last);
-		for (let i = this.nowSize - 1; i >= 0; i--) {
-			if (this.colors[i] !== last) {
-				break;
-			}
-			const pop = this.colors.pop() as Color;
-			res.push(pop);
-		}
-		return res;
-	}
+	// 	const res: Color[] = [];
+	// 	const last = this.colors.pop() as Color; // undefinedでないことは保証されてる
+	// 	res.push(last);
+	// 	for (let i = this.nowSize - 1; i >= 0; i--) {
+	// 		if (this.colors[i] !== last) {
+	// 			break;
+	// 		}
+	// 		const pop = this.colors.pop() as Color;
+	// 		res.push(pop);
+	// 	}
+	// 	return res;
+	// }
 
 	popLast(): Color {
 		if (this.isEmpty())
@@ -75,26 +74,26 @@ export class Tube {
 	}
 
 	// これだとtoTubeが値コピーになる。参照コピーではない
-	transfer(toTube: Tube) {
-		if (this.lastOne !== toTube.lastOne)
-			throw Error(
-				`Oops! Cant transfer. Same color is allowed. from: ${this.lastOne}, to: ${toTube.lastOne}`,
-			);
-		const transferColor = toTube.lastOne;
-		let canMove = true;
-		while (canMove) {
-			const pop = this.popLast();
-			toTube.colors.push(pop);
+	// transfer(toTube: Tube) {
+	// 	if (this.lastOne !== toTube.lastOne)
+	// 		throw Error(
+	// 			`Oops! Cant transfer. Same color is allowed. from: ${this.lastOne}, to: ${toTube.lastOne}`,
+	// 		);
+	// 	const transferColor = toTube.lastOne;
+	// 	let canMove = true;
+	// 	while (canMove) {
+	// 		const pop = this.popLast();
+	// 		toTube.colors.push(pop);
 
-			// ループ終了条件
-			if (this.lastOne !== transferColor) {
-				canMove = false;
-			}
-			if (toTube.isFull()) {
-				canMove = false;
-			}
-		}
-	}
+	// 		// ループ終了条件
+	// 		if (this.lastOne !== transferColor) {
+	// 			canMove = false;
+	// 		}
+	// 		if (toTube.isFull()) {
+	// 			canMove = false;
+	// 		}
+	// 	}
+	// }
 
 	isFull() {
 		return this.colors.length === this.maxSize;
