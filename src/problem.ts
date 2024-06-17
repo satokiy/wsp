@@ -13,7 +13,7 @@ export class Problem {
 		this.answerPath = [];
 	}
 
-	copy() {
+	clone() {
 		const newTubes = this.tubes.map((t) => t.copy());
 		return new Problem(newTubes);
 	}
@@ -50,6 +50,7 @@ export class Problem {
 			this.answerPath.push(node);
 			node = this.visits.get(node)!;
 		}
+		this.answerPath.reverse();
 	}
 
 	// 探索終了定義
@@ -65,7 +66,6 @@ export class Problem {
 		for (const tube of tubes) {
 			tube.colors.map((color) => flat.push(color));
 		}
-		console.log(flat);
 		const colors: { [key: string]: number } = flat.reduce((acc: any, color) => {
 			acc[color] = (acc[color] || 0) + 1;
 			return acc;
@@ -75,7 +75,6 @@ export class Problem {
 		}
 	}
 
-	// ゲームをプレイ
 	play() {
 		// 初期化
 		const init = this.snapshot();
@@ -87,10 +86,9 @@ export class Problem {
 			let node = this.queue.shift()!;
 			// queueから盤面Problemを復元する
 			const table = Problem.restore(node);
-			this.easyCheck(table.tubes);
 
 			// 盤面のコピーを生成
-			let copy = table.copy();
+			let copy = table.clone();
 
 			/*
 			 * 移動のルール
@@ -112,29 +110,42 @@ export class Problem {
 				);
 
 				// すべての移動可能なTube
-				for (const toTube of availableTubes) {
-					// 移動元がすべて同色,かつ移動先が空の場合、動かす意味がない
-					// TODO: 実際には探索済みリストとして判定されるはず？
+				for (let j = 0; j < availableTubes.length; j++) {
+					const toTube = availableTubes[j];
 					if (fromTube.filledSameColor() && toTube.isEmpty()) {
-						continue;
-					}
-					// fromとtoの上澄みは同じ色、もしくはtoが空
-					if (toTube.notEmpty() && fromTube.lastOne !== toTube.lastOne) {
+						// 移動元がすべて同色,かつ移動先が空の場合、動かす意味がない
+						// TODO: 実際には探索済みリストとして判定されるはず？
 						continue;
 					}
 
-					// 移動処理
+					// fromとtoの上澄みが異なる色の場合は移動できない
+					if (
+						toTube.lastOne !== undefined &&
+						fromTube.lastOne !== toTube.lastOne
+					) {
+						continue;
+					}
+
+					/**
+					 * 移動処理
+					 */
 					const color = fromTube.lastOne;
-					while (fromTube.lastOne === color && toTube.notFull()) {
-						const pop = fromTube.popLast();
-						toTube.colors.push(pop);
+					// もとの盤面を壊さないようにコピーを作成
+					const copy2 = copy.clone();
+					const fromIndex = copy.tubes.indexOf(fromTube);
+					const toIndex = copy.tubes.indexOf(toTube);
+					const from = copy2.tubes[fromIndex];
+					const to = copy2.tubes[toIndex];
+
+					while (from.lastOne === color && to.notFull()) {
+						const pop = from.popLast();
+						to.colors.push(pop);
 					}
 
-					const snapshot = copy.snapshot();
+					const snapshot = copy2.snapshot();
 
 					// 探索済みなら、copyを戻して次のqueueへ
 					if (this.visited(snapshot)) {
-						copy = table.copy();
 						continue;
 					}
 
@@ -144,19 +155,17 @@ export class Problem {
 					// 次の探索queueに追加
 					this.queue.push(snapshot);
 
-					if (copy.isDone()) {
+					if (copy2.isDone()) {
 						this.setAnswer(snapshot);
+						break;
 					}
-
-					// 重要: copyの状態を移動前に戻す
-					copy = table.copy();
 				}
 			}
 		}
 		if (this.answerPath.length === 0) {
-			console.log("I can't solve...");
+			console.log("I can't solve 🥺");
 		} else {
-			console.log("Congratulation!!!");
+			console.log("Congratulation 🎉");
 			for (const [index, r] of Object.entries(this.answerPath)) {
 				console.log("------------------------");
 				console.log(index);

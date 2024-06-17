@@ -39,7 +39,7 @@ export class Tube {
 	// }
 
 	// 一番上の色
-	get lastOne(): Color {
+	get lastOne(): Color | undefined {
 		return this.colors[this.colors.length - 1];
 	}
 
