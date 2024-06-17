@@ -13,5 +13,6 @@ eg.
 npm run solve 1
 ```
 
-
-If you want to add a new problem, you can add to [src/problems.ts](src/problems.ts)
+### ⚠️NOTE
+The number of problems is quite small.  
+You can see all problems at [src/problems.ts](src/problems.ts), and also you can add problems to that.
