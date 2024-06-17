@@ -1,5 +1,6 @@
 import { Problem } from "./problem";
-import { Color, Tube } from "./tube";
+import { Tube } from "./tube";
+import { Color } from "./color";
 
 export const problems: { id: number; problem: Problem }[] = [
 	{

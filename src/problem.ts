@@ -1,4 +1,5 @@
-import { Color, ColorCodes, Tube, emptyColor, printColoredText } from "./tube";
+import { Tube } from "./tube";
+import { type Color, emptyColor, printColoredText } from "./color";
 
 export class Problem {
 	tubes: Tube[];
@@ -91,11 +92,11 @@ export class Problem {
 
 		while (this.queue.length > 0) {
 			// queueから1つ取得する
-			let node = this.queue.shift()!;
+			const node = this.queue.shift()!;
 			// queueから盤面を復元する
 			const table = Problem.restore(node);
 			// 盤面のコピーを生成
-			let copy = table.clone();
+			const copy = table.clone();
 
 			/*
 			 * 移動のルール
