@@ -1,4 +1,4 @@
-import { Color, Tube } from "./tube";
+import { Color, ColorCodes, Tube, emptyColor, printColoredText } from "./tube";
 
 export class Problem {
 	tubes: Tube[];
@@ -60,18 +60,26 @@ export class Problem {
 		return filledTubes.every((tube) => tube.isCompleted());
 	}
 
-	// queueごとの簡易チェック処理
-	easyCheck(tubes: Tube[]) {
-		let flat: Color[] = [];
-		for (const tube of tubes) {
-			tube.colors.map((color) => flat.push(color));
-		}
-		const colors: { [key: string]: number } = flat.reduce((acc: any, color) => {
-			acc[color] = (acc[color] || 0) + 1;
+	// 問題として成立しているかチェック
+	check() {
+		const flatten = this.tubes.reduce((acc: Color[], tube: Tube) => {
+			tube.colors.reduce((acc2: Color[], color: Color) => {
+				acc2.push(color);
+				return acc2;
+			}, []);
 			return acc;
-		}, {});
+		}, []);
+
+		const colors: { [key: string]: number } = flatten.reduce(
+			(acc: any, color) => {
+				acc[color] = (acc[color] || 0) + 1;
+				return acc;
+			},
+			{},
+		);
+
 		if (Object.values(colors).some((count) => count > 4)) {
-			throw Error("something went wrong");
+			throw Error("something went wrong. fix the problem.");
 		}
 	}
 
@@ -84,9 +92,8 @@ export class Problem {
 		while (this.queue.length > 0) {
 			// queueから1つ取得する
 			let node = this.queue.shift()!;
-			// queueから盤面Problemを復元する
+			// queueから盤面を復元する
 			const table = Problem.restore(node);
-
 			// 盤面のコピーを生成
 			let copy = table.clone();
 
@@ -109,12 +116,11 @@ export class Problem {
 					(tube) => tube.notCompleted() && tube.notFull(),
 				);
 
-				// すべての移動可能なTube
 				for (let j = 0; j < availableTubes.length; j++) {
 					const toTube = availableTubes[j];
 					if (fromTube.filledSameColor() && toTube.isEmpty()) {
 						// 移動元がすべて同色,かつ移動先が空の場合、動かす意味がない
-						// TODO: 実際には探索済みリストとして判定されるはず？
+						// MEMO: 実際には探索済みリストとして判定されるはず？
 						continue;
 					}
 
@@ -169,10 +175,17 @@ export class Problem {
 			for (const [index, r] of Object.entries(this.answerPath)) {
 				console.log("------------------------");
 				console.log(index);
-				const obj = JSON.parse(r);
-				for (const tube of obj) {
-					console.log(tube.colors);
-				}
+				const obj: Tube[] = JSON.parse(r);
+				const colors = obj.map((tube, i) => {
+					const filled = tube.colors.map((color: Color) =>
+						printColoredText(color),
+					);
+					const empty: string[] = new Array(
+						tube.maxSize - tube.colors.length,
+					).fill(emptyColor()); // 空の部分を埋める
+					return "[" + [...filled, ...empty].join(" ") + "]";
+				});
+				console.log(colors.join(" "));
 			}
 		}
 	}

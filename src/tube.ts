@@ -7,9 +7,41 @@ export const Color = {
 	Ylw: "Ylw", // 黄
 	Ppl: "Ppl", // 紫
 	Org: "Org", // オレンジ
+	Cyn: "Cyn", // シアン
+	Pnk: "Pnk", // ピンク
+	Lym: "Lym", // ライム
+	Gry: "Gry", // グレー
+	Ygn: "Ygn", // 黄緑
+	Brn: "Brn", // 茶
 } as const;
 
 export type Color = (typeof Color)[keyof typeof Color];
+
+export const ColorCodes = {
+	Red: "\x1b[38;5;196m", // 赤
+	Grn: "\x1b[38;5;28m", // 緑
+	Blu: "\x1b[38;5;21m", // 青
+	Ylw: "\x1b[38;5;226m", // 黄
+	Ppl: "\x1b[38;5;129m", // 紫
+	Org: "\x1b[38;5;208m", // オレンジ
+	Cyn: "\x1b[38;5;51m", // シアン
+	Pnk: "\x1b[38;5;213m", // ピンク
+	Lym: "\x1b[38;5;35m", // ライム
+	Gry: "\x1b[38;5;245m", // グレー
+	Ygn: "\x1b[38;5;40m", // 黄緑
+	Brn: "\x1b[38;5;130m", // 茶
+	Reset: "\x1b[0m", // リセット
+	Non: "\x1b[38;5;0m", // 黒（空の表示用）
+};
+
+export function printColoredText(color: Color) {
+	const colorText = color + " ".repeat(3 - color.length);
+	return ColorCodes[color] + colorText + ColorCodes.Reset;
+}
+
+export function emptyColor() {
+	return ColorCodes.Non + "AAA" + ColorCodes.Reset;
+}
 
 // いったん現実的な値で。
 type TubeSize = 2 | 3 | 4 | 5 | 6 | 7 | 8;
@@ -34,66 +66,16 @@ export class Tube {
 		return newTube;
 	}
 
-	// get nowSize() {
-	// 	return this.colors.length;
-	// }
-
 	// 一番上の色
 	get lastOne(): Color | undefined {
 		return this.colors[this.colors.length - 1];
 	}
-
-	// insertLastBlock(block: Color[]): void {
-	// 	if (this.isFull()) throw new Error("Oops! This tube is full.");
-	// 	if (this.nowSize + block.length > this.maxSize)
-	// 		throw new Error("Oops! The number of colors cannot exceed the max size.");
-
-	// 	for (const color of block) this.colors.push(color);
-	// }
-
-	// popLastBlock(): Color[] {
-	// 	if (this.isEmpty()) throw new Error("Oops! This is Empty tube.");
-
-	// 	const res: Color[] = [];
-	// 	const last = this.colors.pop() as Color; // undefinedでないことは保証されてる
-	// 	res.push(last);
-	// 	for (let i = this.nowSize - 1; i >= 0; i--) {
-	// 		if (this.colors[i] !== last) {
-	// 			break;
-	// 		}
-	// 		const pop = this.colors.pop() as Color;
-	// 		res.push(pop);
-	// 	}
-	// 	return res;
-	// }
 
 	popLast(): Color {
 		if (this.isEmpty())
 			throw new Error("Oops! Can't pop because this is empty tube.");
 		return this.colors.pop() as Color;
 	}
-
-	// これだとtoTubeが値コピーになる。参照コピーではない
-	// transfer(toTube: Tube) {
-	// 	if (this.lastOne !== toTube.lastOne)
-	// 		throw Error(
-	// 			`Oops! Cant transfer. Same color is allowed. from: ${this.lastOne}, to: ${toTube.lastOne}`,
-	// 		);
-	// 	const transferColor = toTube.lastOne;
-	// 	let canMove = true;
-	// 	while (canMove) {
-	// 		const pop = this.popLast();
-	// 		toTube.colors.push(pop);
-
-	// 		// ループ終了条件
-	// 		if (this.lastOne !== transferColor) {
-	// 			canMove = false;
-	// 		}
-	// 		if (toTube.isFull()) {
-	// 			canMove = false;
-	// 		}
-	// 	}
-	// }
 
 	isFull() {
 		return this.colors.length === this.maxSize;
