@@ -15,12 +15,12 @@ export class Problem {
 	}
 
 	clone() {
-		const newTubes = this.tubes.map((t) => t.copy());
+		const newTubes = this.tubes.map((t) => t.clone());
 		return new Problem(newTubes);
 	}
 
 	// queueに格納するためのスナップショット
-	// NOTE: Tubeの入れ替えによって同じ盤面になる場合は探索済みと判定するため、sortする
+	// NOTE: sortするのは、Tubeの入れ替えによって同じ盤面になる場合は探索済みと判定するため
 	snapshot(): string {
 		const sorted = this.tubes
 			.map((tube) => ({ colors: tube.colors, maxSize: tube.maxSize }))
@@ -62,13 +62,9 @@ export class Problem {
 	}
 
 	// 問題として成立しているかチェック
-	check() {
+	notValid(): boolean {
 		const flatten = this.tubes.reduce((acc: Color[], tube: Tube) => {
-			tube.colors.reduce((acc2: Color[], color: Color) => {
-				acc2.push(color);
-				return acc2;
-			}, []);
-			return acc;
+			return acc.concat(tube.colors);
 		}, []);
 
 		const colors: { [key: string]: number } = flatten.reduce(
@@ -79,12 +75,15 @@ export class Problem {
 			{},
 		);
 
-		if (Object.values(colors).some((count) => count > 4)) {
-			throw Error("something went wrong. fix the problem.");
+		const set = new Set(Object.values(colors));
+		if (set.size > 1) {
+			console.error(colors);
+			return true;
 		}
+		return false;
 	}
 
-	play() {
+	solve(): boolean {
 		// 初期化
 		const init = this.snapshot();
 		this.queue.push(init);
@@ -169,20 +168,18 @@ export class Problem {
 				}
 			}
 		}
-		if (this.answerPath.length === 0) {
-			console.log("I can't solve 🥺");
-		} else {
-			this.showAnswer();
-		}
+
+		// 解けたらtrue
+		return this.answerPath.length !== 0 ? true : false;
 	}
 
 	showAnswer() {
-		console.log("Congratulation 🎉");
-
 		let prevTubes: string[] = [];
 		for (const [index, r] of Object.entries(this.answerPath)) {
 			console.log(index);
 			console.log("");
+
+			// 色付け
 			const tubes: Tube[] = JSON.parse(r);
 			const colors = tubes.map((tube, i) => {
 				const filled = tube.colors.map((color: Color) => coloredText(color));
@@ -192,6 +189,7 @@ export class Problem {
 				return `[${[...filled, ...empty].join(" ")}]`;
 			});
 
+			// 変更箇所に矢印
 			const displays = [...colors];
 			displays.find((d) => {
 				if (prevTubes.length !== 0 && !prevTubes.includes(d)) {
@@ -199,6 +197,8 @@ export class Problem {
 					displays[index] = d + "←";
 				}
 			});
+
+			// 出力
 			displays.map((d) => console.log(d));
 			console.log("");
 			prevTubes = colors;

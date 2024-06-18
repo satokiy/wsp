@@ -37,6 +37,20 @@ export const problems: { id: number; problem: Problem }[] = [
 		]),
 	},
 	{
+		id: 38,
+		problem: new Problem([
+			new Tube([Color.Ylw, Color.Org, Color.Ppl, Color.Cyn], 4),
+			new Tube([Color.Ylw, Color.Ppl, Color.Cyn, Color.Pnk], 4),
+			new Tube([Color.Grn, Color.Grn, Color.Blu, Color.Ppl], 4),
+			new Tube([Color.Grn, Color.Blu, Color.Org, Color.Org], 4),
+			new Tube([Color.Ylw, Color.Blu, Color.Org, Color.Cyn], 4),
+			new Tube([Color.Grn, Color.Blu, Color.Ppl, Color.Cyn], 4),
+			new Tube([Color.Ylw, Color.Pnk, Color.Pnk, Color.Pnk], 4),
+			new Tube([], 4),
+			new Tube([], 4),
+		]),
+	},
+	{
 		id: 105,
 		problem: new Problem([
 			new Tube([Color.Cyn, Color.Cyn, Color.Grn, Color.Blu], 4),

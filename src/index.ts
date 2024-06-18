@@ -8,11 +8,20 @@ function main() {
 		throw Error("No problem found.");
 	}
 
-	problem.check();
+	if (problem.notValid()) {
+		throw Error("something went wrong. fix the problem.");
+	}
 
-	console.time("timer");
-	problem.play();
-	console.timeEnd("timer");
+	const start = performance.now();
+	const solved = problem.solve();
+	const end = performance.now();
+
+	if (solved) {
+		problem.showAnswer();
+		console.log("time: ", (end - start).toPrecision(8), "ms");
+	} else {
+		console.log("I can't solve 🥺");
+	}
 }
 
 main();

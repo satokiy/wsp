@@ -18,7 +18,7 @@ export class Tube {
 		this.maxSize = maxSize; // このTubeの最大長
 	}
 
-	copy() {
+	clone() {
 		const newTube = new Tube([...this.colors], this.maxSize);
 		return newTube;
 	}
