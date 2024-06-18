@@ -32,11 +32,30 @@ export const ColorCodes = {
 	Non: "\x1b[38;5;0m", // 黒（空の表示用）
 };
 
-export function printColoredText(color: Color) {
+export const BackColorCodes = {
+	Red: "\x1b[48;5;196m", // 赤
+	Grn: "\x1b[48;5;28m", // 緑
+	Blu: "\x1b[48;5;21m", // 青
+	Ylw: "\x1b[48;5;226m", // 黄
+	Ppl: "\x1b[48;5;129m", // 紫
+	Org: "\x1b[48;5;208m", // オレンジ
+	Cyn: "\x1b[48;5;51m", // シアン
+	Pnk: "\x1b[48;5;213m", // ピンク
+	Lym: "\x1b[48;5;35m", // ライム
+	Gry: "\x1b[48;5;245m", // グレー
+	Ygn: "\x1b[48;5;40m", // 黄緑
+	Brn: "\x1b[48;5;130m", // 茶
+	Reset: "\x1b[0m", // リセット
+	Non: "\x1b[48;5;0m", // 黒（空の表示用）
+};
+
+export function coloredText(color: Color) {
 	const colorText = color + " ".repeat(3 - color.length);
-	return ColorCodes[color] + colorText + ColorCodes.Reset;
+	return (
+		ColorCodes[color] + BackColorCodes[color] + colorText + ColorCodes.Reset
+	);
 }
 
-export function emptyColor() {
-	return ColorCodes.Non + "   " + ColorCodes.Reset;
+export function coloredEmpty() {
+	return ColorCodes.Non + BackColorCodes.Non + "   " + ColorCodes.Reset;
 }

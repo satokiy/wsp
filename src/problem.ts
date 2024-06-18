@@ -1,5 +1,5 @@
 import { Tube } from "./tube";
-import { type Color, emptyColor, printColoredText } from "./color";
+import { type Color, coloredEmpty, coloredText } from "./color";
 
 export class Problem {
 	tubes: Tube[];
@@ -172,22 +172,36 @@ export class Problem {
 		if (this.answerPath.length === 0) {
 			console.log("I can't solve 🥺");
 		} else {
-			console.log("Congratulation 🎉");
-			for (const [index, r] of Object.entries(this.answerPath)) {
-				console.log("------------------------");
-				console.log(index);
-				const obj: Tube[] = JSON.parse(r);
-				const colors = obj.map((tube, i) => {
-					const filled = tube.colors.map((color: Color) =>
-						printColoredText(color),
-					);
-					const empty: string[] = new Array(
-						tube.maxSize - tube.colors.length,
-					).fill(emptyColor()); // 空の部分を埋める
-					return "[" + [...filled, ...empty].join(" ") + "]";
-				});
-				console.log(colors.join(" "));
-			}
+			this.showAnswer();
+		}
+	}
+
+	showAnswer() {
+		console.log("Congratulation 🎉");
+
+		let prevTubes: string[] = [];
+		for (const [index, r] of Object.entries(this.answerPath)) {
+			console.log(index);
+			console.log("");
+			const tubes: Tube[] = JSON.parse(r);
+			const colors = tubes.map((tube, i) => {
+				const filled = tube.colors.map((color: Color) => coloredText(color));
+				const empty: string[] = new Array(
+					tube.maxSize - tube.colors.length,
+				).fill(coloredEmpty()); // 空の部分を埋める
+				return `[${[...filled, ...empty].join(" ")}]`;
+			});
+
+			const displays = [...colors];
+			displays.find((d) => {
+				if (prevTubes.length !== 0 && !prevTubes.includes(d)) {
+					const index = colors.indexOf(d);
+					displays[index] = d + "←";
+				}
+			});
+			displays.map((d) => console.log(d));
+			console.log("");
+			prevTubes = colors;
 		}
 	}
 }
